@@ -237,23 +237,25 @@ class ClearButton(ttk.Button):
 class StatsElementClass:
     def __init__(self,mstr,Row,*vars):
         self.statslbl=ttk.Label(mstr,text="Характеристики:")
-        self.chosenmanalbl=ttk.Label(mstr,textvariable=vars[0])
-        self.chosenstrlbl=ttk.Label(mstr,textvariable=vars[1])
-        self.chosenendlbl=ttk.Label(mstr,textvariable=vars[2])
-        self.chosenloylbl=ttk.Label(mstr,textvariable=vars[3])
-        self.statsCB=ttk.Combobox(mstr,values=("Мана-стоимость","Сила","Выносливость","Верность"),state="readonly")
-        self.elgbtn=ttk.Button(mstr,text="=",command=self.onELGButtonClick)
-        self.statent=ttk.Entry(mstr)
+        self.statsframe=ttk.Frame(mstr)
+        self.chosenmanalbl=ttk.Label(self.statsframe,textvariable=vars[0])
+        self.chosenstrlbl=ttk.Label(self.statsframe,textvariable=vars[1])
+        self.chosenendlbl=ttk.Label(self.statsframe,textvariable=vars[2])
+        self.chosenloylbl=ttk.Label(self.statsframe,textvariable=vars[3])
+        self.statsCB=ttk.Combobox(mstr,values=("Мана-стоимость","Сила","Выносливость","Верность"),state="readonly",width=35)
+        self.elgbtn=ttk.Button(mstr,text="=",command=self.onELGButtonClick,width=5)
+        self.statent=ttk.Entry(mstr,width=8)
         self.addbtn=ttk.Button(mstr,text="Добавить",command=self.onAddButtonClick)
         self.clearbtn=ttk.Button(mstr,text="Сброс",command=self.onClearButtonClick)
         self.statslbl.grid(row=Row,column=0,columnspan=5,sticky="w")
-        self.chosenmanalbl.grid(row=Row+1,column=0)
-        self.chosenstrlbl.grid(row=Row+1,column=1)
-        self.chosenendlbl.grid(row=Row+1,column=2)
-        self.chosenloylbl.grid(row=Row+1,column=3)
+        self.statsframe.grid(row=Row+1,column=0,columnspan=5)
+        self.chosenmanalbl.pack(side=LEFT)
+        self.chosenstrlbl.pack(side=LEFT)
+        self.chosenendlbl.pack(side=LEFT)
+        self.chosenloylbl.pack(side=LEFT)
         self.statsCB.grid(row=Row+2,column=0)
-        self.elgbtn.grid(row=Row+2,column=1)
-        self.statent.grid(row=Row+2,column=2)
+        self.elgbtn.grid(row=Row+2,column=1,padx=5)
+        self.statent.grid(row=Row+2,column=2,padx=(0,5))
         self.addbtn.grid(row=Row+2,column=3)
         self.clearbtn.grid(row=Row+2,column=4)
         self.elgstate=0
@@ -272,7 +274,7 @@ class StatsElementClass:
         elif(self.elgstate==2):
             self.elgbtn.config(text="=")
             self.elgstate=0
-    def onAddButtonClick(self):
+    def onAddButtonClick(self):        
         if(self.statsCB.get()=="Мана-стоимость"):
             if(self.manavar.get()!=""):
                 tmp=self.manavar.get()
@@ -320,7 +322,7 @@ index=0
 root=Tk()
 root.title("MTG CardBox")
 root.iconbitmap(default="C:\\Users\\User\\Desktop\\Programming\\MyProgs\\Python\\MTG Card Box\\MTG.ico")
-root.minsize(1200,600)
+root.minsize(1200,800)
 
 namevar=StringVar()
 supertypevar=StringVar()
@@ -343,11 +345,12 @@ blackbool=BooleanVar()
 redbool=BooleanVar()
 greenbool=BooleanVar()
 noncolbool=BooleanVar()
+flipbool=BooleanVar()
 
 def closeRoot():
     root.destroy()
 def showAbout():
-    showinfo('О программе','Версия: 1.0.0\nДата изменения: 09.12.2023\nАвтор: Тимофей FaaZMaaR Волхонский')
+    showinfo('О программе','Версия: 1.1.2\nДата изменения: 16.12.2023\nАвтор: Тимофей FaaZMaaR Волхонский')
 def setAttrFrame():
     global cardimg,index
     img=Image.open(imgpath+alldata[index][0])
@@ -355,7 +358,11 @@ def setAttrFrame():
     cardimg=ImageTk.PhotoImage(img)
     imglbl.config(image=cardimg)
     namelbl.config(text=alldata[index][1])
-    (descrlbl).config(text=alldata[index][13])
+    descrlbl.config(text=alldata[index][13])
+    if(alldata[index][18]!=None):
+        flipbtn.config(state=ACTIVE)
+    else:
+        flipbtn.config(state=DISABLED)
     typetext=""
     if(alldata[index][6]!=None):typetext+=alldata[index][6]+" "
     if(alldata[index][7]!=None):typetext+=alldata[index][7]
@@ -368,19 +375,53 @@ def setAttrFrame():
     if(alldata[index][11]!=None):strendloytext+="/"+str(alldata[index][11])
     if(alldata[index][12]!=None):strendloytext+=str(alldata[index][12])
     strendlbl.config(text=strendloytext)
+def onFlipbtnClick():
+    global cardimg,index
+    if(not flipbool.get()):
+        flipbool.set(True)        
+        img=Image.open(imgpath+osidedata[0][0])
+        img=img.resize((int(img.width/1.75),int(img.height/1.75)))
+        cardimg=ImageTk.PhotoImage(img)
+        imglbl.config(image=cardimg)
+        namelbl.config(text=osidedata[0][1])
+        descrlbl.config(text=osidedata[0][13])
+        typetext=""
+        if(osidedata[0][6]!=None):typetext+=osidedata[0][6]+" "
+        if(osidedata[0][7]!=None):typetext+=osidedata[0][7]
+        if(osidedata[0][8]!=None):typetext+=" - "+osidedata[0][8]
+        typelbl.config(text=typetext)
+        manalbl.config(text="")
+        if(osidedata[0][9]!=None):manalbl.config(text=osidedata[0][9])
+        strendloytext=""
+        if(osidedata[0][10]!=None):strendloytext+=str(osidedata[0][10])
+        if(osidedata[0][11]!=None):strendloytext+="/"+str(osidedata[0][11])
+        if(osidedata[0][12]!=None):strendloytext+=str(osidedata[0][12])
+        strendlbl.config(text=strendloytext)
+    else:
+        flipbool.set(False)
+        setAttrFrame()
 def treeselect(evt):
-    global index    
+    global index,osidedata   
     index=int(tree.selection()[0])
+    flipbool.set(False)
+    if(alldata[index][18]!=None):
+        dsid=alldata[index][18]
+        dbcursor.execute(f"SELECT * FROM OtherSide WHERE DoubleSideID={dsid}")
+        osidedata=dbcursor.fetchall()
     setAttrFrame()
 def onimgpress(evt):
     global incardimg
     imgwnd=Toplevel()
-    imgwnd.title(alldata[index][1])
+    if(flipbool.get()):
+        imgwnd.title(osidedata[0][1])
+        img=Image.open(imgpath+osidedata[0][0])
+    else:
+        imgwnd.title(alldata[index][1])
+        img=Image.open(imgpath+alldata[index][0])
     imgwnd.geometry("350x500")
     imgwnd.resizable(False,False)    
     innerimg=ttk.Label(imgwnd)
     innerimg.pack(anchor="center",expand=True)
-    img=Image.open(imgpath+alldata[index][0])
     incardimg=ImageTk.PhotoImage(img)
     innerimg.config(image=incardimg)
 def onTypesButtonClick():
@@ -442,21 +483,24 @@ def showfilter():
     
     filterwnd=Toplevel()
     filterwnd.title("Фильтрация")
-    filterwnd.geometry("600x750")
+    filterwnd.minsize(500,620)
+    filterwnd.resizable(False,False)
     
     typeslbl=ttk.Label(filterwnd,text="Тип:")
-    chosenstypelbl=ttk.Label(filterwnd,textvariable=supertypevar)
-    chosentypelbl=ttk.Label(filterwnd,textvariable=typevar)
-    chosenutypelbl=ttk.Label(filterwnd,textvariable=undertypevar)
-    stypeCB=ttk.Combobox(filterwnd,values=supertypes.values,state="readonly")
-    typeCB=ttk.Combobox(filterwnd,values=types.values,state="readonly")
-    utypeCB=ttk.Combobox(filterwnd,values=undertypes.values,state="readonly")
+    typesframe=ttk.Frame(filterwnd)
+    chosenstypelbl=ttk.Label(typesframe,textvariable=supertypevar)
+    chosentypelbl=ttk.Label(typesframe,textvariable=typevar)
+    chosenutypelbl=ttk.Label(typesframe,textvariable=undertypevar)
+    stypeCB=ttk.Combobox(filterwnd,values=supertypes.values,state="readonly",width=35)
+    typeCB=ttk.Combobox(filterwnd,values=types.values,state="readonly",width=35)
+    utypeCB=ttk.Combobox(filterwnd,values=undertypes.values,state="readonly",width=35)
     addTypes=ttk.Button(filterwnd,text="Добавить",command=onTypesButtonClick)
     clearTypes=ttk.Button(filterwnd,text="Сброс",command=onCTypesButtonClick)
     typeslbl.grid(row=0,column=0,columnspan=5,sticky="w")
-    chosenstypelbl.grid(row=1,column=0)
-    chosentypelbl.grid(row=1,column=1)
-    chosenutypelbl.grid(row=1,column=2)
+    typesframe.grid(row=1,column=0,columnspan=5)
+    chosenstypelbl.pack(side=LEFT)
+    chosentypelbl.pack(side=LEFT)
+    chosenutypelbl.pack(side=LEFT)
     stypeCB.grid(row=2,column=0)
     typeCB.grid(row=3,column=0)
     utypeCB.grid(row=4,column=0)
@@ -467,7 +511,7 @@ def showfilter():
     
     setslbl=ttk.Label(filterwnd,text="Сет:")
     chosensetlbl=ttk.Label(filterwnd,textvariable=setvar)
-    setCB=ttk.Combobox(filterwnd,values=sets.values,state="readonly")
+    setCB=ttk.Combobox(filterwnd,values=sets.values,state="readonly",width=35)
     addSet=AddButton(filterwnd,setCB,setvar)
     clearSet=ClearButton(filterwnd,setvar)
     setslbl.grid(row=8,column=0,columnspan=5,sticky="w")
@@ -478,7 +522,7 @@ def showfilter():
     
     artistslbl=ttk.Label(filterwnd,text="Художник:")
     chosenartistlbl=ttk.Label(filterwnd,textvariable=artistvar)
-    artistCB=ttk.Combobox(filterwnd,values=artists.values,state="readonly")
+    artistCB=ttk.Combobox(filterwnd,values=artists.values,state="readonly",width=35)
     addArtist=AddButton(filterwnd,artistCB,artistvar)
     clearArtist=ClearButton(filterwnd,artistvar)
     artistslbl.grid(row=11,column=0,columnspan=5,sticky="w")
@@ -489,7 +533,7 @@ def showfilter():
     
     designslbl=ttk.Label(filterwnd,text="Оформление:")
     chosendesignlbl=ttk.Label(filterwnd,textvariable=designvar)
-    designCB=ttk.Combobox(filterwnd,values=designs.values,state="readonly")
+    designCB=ttk.Combobox(filterwnd,values=designs.values,state="readonly",width=35)
     addDesign=AddButton(filterwnd,designCB,designvar)
     clearDesign=ClearButton(filterwnd,designvar)
     designslbl.grid(row=14,column=0,columnspan=5,sticky="w")
@@ -517,7 +561,7 @@ def showfilter():
     
     descrslbl=ttk.Label(filterwnd,text="Описание:")
     chosendescrlbl=ttk.Label(filterwnd,textvariable=descriptvar)
-    descrent=ttk.Entry(filterwnd)
+    descrent=ttk.Entry(filterwnd,width=35)
     addDescr=AddButton(filterwnd,descrent,descriptvar)
     clearDescr=ClearButton(filterwnd,descriptvar)
     descrslbl.grid(row=19,column=0,columnspan=5,sticky="w")
@@ -528,7 +572,7 @@ def showfilter():
     
     rarslbl=ttk.Label(filterwnd,text="Редкость:")
     chosenrarelbl=ttk.Label(filterwnd,textvariable=rarityvar)
-    rareCB=ttk.Combobox(filterwnd,values=raritys.values,state="readonly")
+    rareCB=ttk.Combobox(filterwnd,values=raritys.values,state="readonly",width=35)
     addRarity=AddButton(filterwnd,rareCB,rarityvar)
     clearRarity=ClearButton(filterwnd,rarityvar)
     rarslbl.grid(row=22,column=0,columnspan=5,sticky="w")
@@ -541,8 +585,8 @@ def showfilter():
     clearbtnf=ttk.Button(filterwnd,text="Сброс",command=onFilterClearButtonClick)
     blanklbl=ttk.Label(filterwnd,text=" ")
     blanklbl.grid(row=25,column=0,columnspan=5)
-    applybtn.grid(row=26,column=0,columnspan=2,sticky="e")
-    clearbtnf.grid(row=26,column=2,columnspan=4,sticky="w")
+    applybtn.grid(row=26,column=3)
+    clearbtnf.grid(row=26,column=4)
 
 mMain=Menu(root)
 mProg=Menu(root,tearoff=0)
@@ -574,14 +618,16 @@ namelbl=ttk.Label(attrframe,anchor="w")
 typelbl=ttk.Label(attrframe,anchor="w")
 manalbl=ttk.Label(attrframe,anchor="e")
 strendlbl=ttk.Label(attrframe,anchor="e")
-(descrlbl)=ttk.Label(attrframe,anchor="center",wraplength=320)
+descrlbl=ttk.Label(attrframe,anchor="center",wraplength=330)
+flipbtn=ttk.Button(attrframe,text="Перевернуть",state=DISABLED,command=onFlipbtnClick)
 imglbl.bind("<ButtonPress>",onimgpress)
 imglbl.grid(row=0,column=0,columnspan=2)
 namelbl.grid(row=1,column=0,sticky="nsew")
 manalbl.grid(row=1,column=1,sticky="nsew")
 typelbl.grid(row=2,column=0,sticky="nsew")
 strendlbl.grid(row=2,column=1,sticky="nsew")
-(descrlbl).grid(row=3,column=0,columnspan=2,sticky="nsew")
+descrlbl.grid(row=3,column=0,columnspan=2,sticky="nsew")
+flipbtn.grid(row=4,column=0,columnspan=2,sticky="ns")
 
 tree=ttk.Treeview(tabframe,columns=cols,show="headings")
 tree.grid(row=0,column=0,sticky="nsew")
