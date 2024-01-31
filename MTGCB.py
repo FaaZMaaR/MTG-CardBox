@@ -4,22 +4,311 @@ from tkinter.messagebox import *
 import sqlite3
 from PIL import Image,ImageTk
 
-database=sqlite3.connect("C:\\Users\\User\\Desktop\\Programming\\MyProgs\\Python\\MTG Card Box\\MTG.db")
+database=sqlite3.connect("MTG.db")
 dbcursor=database.cursor()
-cols=("Name","SetName","Number","Rarity","Quantity","Foil")
+cols=("Numero","Name","SetName","Number","Rarity","Quantity","Foil")
+condition=""
+
+imgpath="Pictures\\"
+index=0
+
+root=Tk()
+root.title("MTG CardBox")
+root.iconbitmap(default="MTG.ico")
+root.minsize(1200,800)
+
+def closeRoot():
+    root.destroy()
+def showAbout():
+    showinfo('О программе','Версия: 1.1.2\nДата изменения: 31.01.2024\nАвтор: Тимофей FaaZMaaR Волхонский')
+
+mMain=Menu(root)
+mProg=Menu(root,tearoff=0)
+mGroup=Menu(root,tearoff=0)
+mProg.add_command(label="О программе",command=showAbout)
+mProg.add_separator()
+mProg.add_command(label="Выход",command=closeRoot)
+
+rargroupvar=StringVar()
+setgroupvar=StringVar()
+colorgroupvar=StringVar()
+typegroupvar=StringVar()
+
+class ValuesClass:
+    def __init__(self,db,index):
+        self.values=list()
+        tmp=set()
+        for v in db:
+            if(v[index]!=None):
+                tmp.add(v[index])
+        for v in tmp:
+            self.values.append(v)
+        self.values.sort()
+        self.values.insert(0,"")
+
+def comfunc():
+    rargroupvar.set("Common")
+    selectData()
+def uncomfunc():
+    rargroupvar.set("Uncommon")
+    selectData()
+def rarfunc():
+    rargroupvar.set("Rare")
+    selectData()
+def mythfunc():
+    rargroupvar.set("Mythic")
+    selectData()
+def afrfunc():
+    setgroupvar.set("Adventures in the Forgotten Realms")
+    selectData()
+def aerfunc():
+    setgroupvar.set("Aether Revolt")
+    selectData()
+def c21func():
+    setgroupvar.set("Commander 2021")
+    selectData()
+def m20func():
+    setgroupvar.set("Core Set 2020")
+    selectData()
+def m21func():
+    setgroupvar.set("Core Set 2021")
+    selectData()
+def ikofunc():
+    setgroupvar.set("Ikoria: Lair of Behemoths")
+    selectData()
+def vowfunc():
+    setgroupvar.set("Innistrad: Crimson Vow")
+    selectData()
+def midfunc():
+    setgroupvar.set("Innistrad: Midnight Hunt")
+    selectData()
+def kldfunc():
+    setgroupvar.set("Kaladesh")
+    selectData()
+def khmfunc():
+    setgroupvar.set("Kaldheim")
+    selectData()
+def neofunc():
+    setgroupvar.set("Kamigawa: Neon Dynasty")
+    selectData()
+def micfunc():
+    setgroupvar.set("Midnight Hunt Commander")
+    selectData()
+def mh2func():
+    setgroupvar.set("Modern Horizons 2")
+    selectData()
+def stxfunc():
+    setgroupvar.set("Strixhaven: School of Mages")
+    selectData()
+def stafunc():
+    setgroupvar.set("Strixhaven Mystical Archive")
+    selectData()
+def plistfunc():
+    setgroupvar.set("The List")
+    selectData()
+def thbfunc():
+    setgroupvar.set("Theros Beyond Death")
+    selectData()
+def eldfunc():
+    setgroupvar.set("Throne of Eldraine")
+    selectData()
+def znrfunc():
+    setgroupvar.set("Zendikar Rising")
+    selectData()
+def warfunc():
+    setgroupvar.set("War of the Spark")
+    selectData()
+def whitefunc():
+    colorgroupvar.set("White")
+    selectData()
+def bluefunc():
+    colorgroupvar.set("Blue")
+    selectData()
+def blackfunc():
+    colorgroupvar.set("Black")
+    selectData()
+def redfunc():
+    colorgroupvar.set("Red")
+    selectData()
+def greenfunc():
+    colorgroupvar.set("Green")
+    selectData()
+def multcolfunc():
+    colorgroupvar.set("multi")
+    selectData()
+def noncolfunc():
+    colorgroupvar.set("Noncolor")
+    selectData()
+def nonbaslandfunc():
+    colorgroupvar.set("nonbase")
+    selectData()
+def baslandfunc():
+    colorgroupvar.set("base")
+    selectData()
+def creaturefunc():
+    typegroupvar.set("Существо") 
+    selectData()   
+def landfunc():
+    typegroupvar.set("Земля")
+    selectData()
+def pwfunc():
+    typegroupvar.set("Planeswalker")
+    selectData()
+def artfunc():
+    typegroupvar.set("Артефакт")
+    selectData()
+def sorcfunc():
+    typegroupvar.set("Волшебство")
+    selectData()
+def instfunc():
+    typegroupvar.set("Мгновенное заклинание")
+    selectData()
+def enchfunc():
+    typegroupvar.set("Чары")
+    selectData()
+def cleargroupfunc():
+    rargroupvar.set("")
+    setgroupvar.set("")
+    colorgroupvar.set("")
+    typegroupvar.set("")
+    selectData()
+    
+def setGroupMenu():
+    global mGroupSet,mGroupRare,mGroupColor,mGroupType,mGroup
+    mGroup.delete(0,END)
+    mGroupRare=Menu(root,tearoff=0)
+    mGroupSet=Menu(root,tearoff=0)
+    mGroupColor=Menu(root,tearoff=0)
+    mGroupType=Menu(root,tearoff=0)
+    
+    vals=ValuesClass(alldata,4)
+    if("Common" in vals.values):
+        mGroupRare.add_command(label="Common",command=comfunc)
+    if("Uncommon" in vals.values):
+        mGroupRare.add_command(label="Uncommon",command=uncomfunc)
+    if("Rare" in vals.values):
+        mGroupRare.add_command(label="Rare",command=rarfunc)
+    if("Mythic" in vals.values):
+        mGroupRare.add_command(label="Mythic",command=mythfunc)
+        
+    vals=ValuesClass(alldata,2)
+    if("Adventures in the Forgotten Realms" in vals.values):
+        mGroupSet.add_command(label="Adventures in the Forgotten Realms",command=afrfunc)
+    if("Aether Revolt" in vals.values):
+        mGroupSet.add_command(label="Aether Revolt",command=aerfunc)
+    if("Commander 2021" in vals.values):
+        mGroupSet.add_command(label="Commander 2021",command=c21func)
+    if("Core Set 2020" in vals.values):
+        mGroupSet.add_command(label="Core Set 2020",command=m20func)
+    if("Core Set 2021" in vals.values):
+        mGroupSet.add_command(label="Core Set 2021",command=m21func)
+    if("Ikoria: Lair of Behemoths" in vals.values):
+        mGroupSet.add_command(label="Ikoria: Lair of Behemoths",command=ikofunc)
+    if("Innistrad: Crimson Vow" in vals.values):
+        mGroupSet.add_command(label="Innistrad: Crimson Vow",command=vowfunc)
+    if("Innistrad: Midnight Hunt"in vals.values):
+        mGroupSet.add_command(label="Innistrad: Midnight Hunt",command=midfunc)
+    if("Kaladesh" in vals.values):
+        mGroupSet.add_command(label="Kaladesh",command=kldfunc)
+    if("Kaldheim" in vals.values):
+        mGroupSet.add_command(label="Kaldheim",command=khmfunc)
+    if("Kamigawa: Neon Dynasty" in vals.values):
+        mGroupSet.add_command(label="Kamigawa: Neon Dynasty",command=neofunc)
+    if("Midnight Hunt Commander" in vals.values):
+        mGroupSet.add_command(label="Midnight Hunt Commander",command=micfunc)
+    if("Modern Horizons 2" in vals.values):
+        mGroupSet.add_command(label="Modern Horizons 2",command=mh2func)
+    if("Strixhaven: School of Mages" in vals.values):
+        mGroupSet.add_command(label="Strixhaven: School of Mages",command=stxfunc)
+    if("Strixhaven Mystical Archive" in vals.values):
+        mGroupSet.add_command(label="Strixhaven Mystical Archive",command=stafunc)
+    if("The List" in vals.values):
+        mGroupSet.add_command(label="The List",command=plistfunc)
+    if("Theros Beyond Death" in vals.values):
+        mGroupSet.add_command(label="Theros Beyond Death",command=thbfunc)
+    if("Throne of Eldraine" in vals.values):
+        mGroupSet.add_command(label="Throne of Eldraine",command=eldfunc)
+    if("Zendikar Rising" in vals.values):
+        mGroupSet.add_command(label="Zendikar Rising",command=znrfunc)
+    if("War of the Spark" in vals.values):
+        mGroupSet.add_command(label="War of the Spark",command=warfunc)
+    
+    vals=ValuesClass(alldata,14)
+    if("White" in vals.values):
+        mGroupColor.add_command(label="Белый",command=whitefunc)
+    if("Blue" in vals.values):
+        mGroupColor.add_command(label="Синий",command=bluefunc)
+    if("Black" in vals.values):
+        mGroupColor.add_command(label="Черный",command=blackfunc)
+    if("Red" in vals.values):
+        mGroupColor.add_command(label="Красный",command=redfunc)
+    if("Green" in vals.values):
+        mGroupColor.add_command(label="Зеленый",command=greenfunc)
+    for v in vals.values:
+        if("|" in v):
+            mGroupColor.add_command(label="Многоцветный",command=multcolfunc)
+            break
+    if("Noncolor" in vals.values):
+        mGroupColor.add_command(label="Бесцветный",command=noncolfunc)   
+    for v in alldata:
+        if((v[6]!="Базовая" and v[6]!="Базовая Снежная") and (v[7]=="Земля" or v[7]=="Артефакт Земля")):
+            mGroupColor.add_command(label="Небазовая земля",command=nonbaslandfunc)
+            break
+    for v in alldata:
+        if((v[6]=="Базовая") or (v[6]=="Базовая Снежная")):
+            mGroupColor.add_command(label="Базовая земля",command=baslandfunc)
+            break
+    
+    typevals=list()
+    for v in alldata:
+        if((v[7]=="Существо") or (v[7]=="Артефакт Существо") or (v[7]=="Чары Существо")):
+            mGroupType.add_command(label="Существо",command=creaturefunc)
+            break
+    for v in alldata:
+        if((v[7]=="Артефакт Земля") or (v[7]=="Земля")):
+            mGroupType.add_command(label="Земля",command=landfunc)
+            break
+    vals=ValuesClass(alldata,7)
+    if("Planeswalker" in vals.values):
+        mGroupType.add_command(label="Planeswalker",command=pwfunc)
+    if("Артефакт" in vals.values):
+        mGroupType.add_command(label="Артефакт",command=artfunc)
+    if("Волшебство" in vals.values):
+        mGroupType.add_command(label="Волшебство",command=sorcfunc)
+    if("Мгновенное заклинание" in vals.values):
+        mGroupType.add_command(label="Мгновенное заклинание",command=instfunc)
+    if("Чары" in vals.values):
+        mGroupType.add_command(label="Чары",command=enchfunc)
+    
+    if(rargroupvar.get()==""):
+        mGroup.add_cascade(label="Редкость",menu=mGroupRare)
+    if(setgroupvar.get()==""):
+        mGroup.add_cascade(label="Сет",menu=mGroupSet)
+    if(colorgroupvar.get()==""):
+        mGroup.add_cascade(label="Цвет",menu=mGroupColor)
+    if(typegroupvar.get()==""):
+        mGroup.add_cascade(label="Тип",menu=mGroupType)
+    mGroup.add_command(label="Сброс",command=cleargroupfunc)
+
+def setTabData():
+    global tabdata
+    tabdata=list()
+    i=1
+    for v in alldata:
+        tabdata.append((i,)+v[1:6]+v[17:18])
+        i+=1
 
 def resetData():
     global alldata,tabdata
     dbcursor.execute(f"SELECT * FROM WorkTable")
     alldata=dbcursor.fetchall()
-    tabdata=list()
-    for v in alldata:
-        tabdata.append(v[1:6]+v[17:18])
+    setTabData()
+    setGroupMenu()
 
 resetData()
 
 def selectData():
-    global alldata,tabdata,index
+    global alldata,tabdata,index,condition
     tmp=""
     index=0
     if(namevar.get()!=""):
@@ -126,12 +415,38 @@ def selectData():
         if(tmp!=""):
             tmp+=" AND "
         tmp+="Color =\'"+colorvar.get()+"\'"
+    if(rargroupvar.get()!=""):
+        if(tmp!=""):
+            tmp+=" AND "
+        tmp+="Rarity =\'"+rargroupvar.get()+"\'"
+    if(setgroupvar.get()!=""):
+        if(tmp!=""):
+            tmp+=" AND "
+        tmp+="SetName =\'"+setgroupvar.get()+"\'"
+    if(colorgroupvar.get()!=""):
+        if(tmp!=""):
+            tmp+=" AND "
+        if(colorgroupvar.get()=="multi"):
+            tmp+="Color IN ('Black|Green','Black|Red','Blue|Black','Blue|Black|Green','Blue|Green','Blue|Red','Blue|Red|Green','Red|Green','White|Black','White|Black|Red','White|Blue','White|Blue|Black|Red|Green','White|Blue|Red','White|Blue|Red|Green','White|Green','White|Red','White|Red|Green')"
+        elif(colorgroupvar.get()=="nonbase"):
+            tmp+="Type IN ('Земля','Артефакт Земля') AND (SuperType IS NULL OR SuperType NOT IN ('Базовая','Базовая Снежная'))"
+        elif(colorgroupvar.get()=="base"):
+            tmp+="SuperType IN ('Базовая','Базовая Снежная')"
+        else:
+            tmp+="Color =\'"+colorgroupvar.get()+"\'"
+    if(typegroupvar.get()!=""):
+        if(tmp!=""):
+            tmp+=" AND "
+        if(typegroupvar.get()=="Существо"):
+            tmp+="Type IN ('Существо','Артефакт Существо','Чары Существо')"
+        elif(typegroupvar.get()=="Земля"):
+            tmp+="Type IN ('Земля','Артефакт Земля')"
+        else:
+            tmp+="Type =\'"+typegroupvar.get()+"\'"
     if(tmp!=""):
         dbcursor.execute(f"SELECT * FROM WorkTable WHERE {tmp}")
         alldata=dbcursor.fetchall()
-        tabdata=list()
-        for v in alldata:
-            tabdata.append(v[1:6]+v[17:18])
+        setTabData()
         for r in tree.get_children():
             tree.delete(r)
         for v in tabdata:
@@ -144,6 +459,9 @@ def selectData():
         for v in tabdata:
             tree.insert("", END,iid=index, values=v)
             index+=1
+    setGroupMenu()
+    condition=tmp
+    
 def onColorButton():
     tmp=""
     if(whitebool.get()):
@@ -174,18 +492,6 @@ def onNoncolorButton():
         redlbl.imgswap()
     if(greenbool.get()):
         greenlbl.imgswap()
-
-class ValuesClass:
-    def __init__(self,db,index):
-        self.values=list()
-        tmp=set()
-        for v in db:
-            if(v[index]!=None):
-                tmp.add(v[index])
-        for v in tmp:
-            self.values.append(v)
-        self.values.sort()
-        self.values.insert(0,"")
 
 class ImgButton(ttk.Label):
     def __init__(self,mstr,text,var):
@@ -316,14 +622,6 @@ artists=ValuesClass(alldata,15)
 designs=ValuesClass(alldata,16)
 raritys=ValuesClass(alldata,4)
 
-imgpath="C:\\Users\\User\\Desktop\\Programming\\MyProgs\\Python\\MTG Card Box\\Pictures\\"
-index=0
-
-root=Tk()
-root.title("MTG CardBox")
-root.iconbitmap(default="C:\\Users\\User\\Desktop\\Programming\\MyProgs\\Python\\MTG Card Box\\MTG.ico")
-root.minsize(1200,800)
-
 namevar=StringVar()
 supertypevar=StringVar()
 typevar=StringVar()
@@ -347,10 +645,6 @@ greenbool=BooleanVar()
 noncolbool=BooleanVar()
 flipbool=BooleanVar()
 
-def closeRoot():
-    root.destroy()
-def showAbout():
-    showinfo('О программе','Версия: 1.1.2\nДата изменения: 16.12.2023\nАвтор: Тимофей FaaZMaaR Волхонский')
 def setAttrFrame():
     global cardimg,index
     img=Image.open(imgpath+alldata[index][0])
@@ -358,7 +652,9 @@ def setAttrFrame():
     cardimg=ImageTk.PhotoImage(img)
     imglbl.config(image=cardimg)
     namelbl.config(text=alldata[index][1])
-    descrlbl.config(text=alldata[index][13])
+    descrlbl.config(text="")
+    if(alldata[index][13]!=None):
+        descrlbl.config(text=alldata[index][13])
     if(alldata[index][18]!=None):
         flipbtn.config(state=ACTIVE)
     else:
@@ -588,13 +884,9 @@ def showfilter():
     applybtn.grid(row=26,column=3)
     clearbtnf.grid(row=26,column=4)
 
-mMain=Menu(root)
-mProg=Menu(root,tearoff=0)
-mProg.add_command(label="О программе",command=showAbout)
-mProg.add_separator()
-mProg.add_command(label="Выход",command=closeRoot)
 mMain.add_cascade(label="Программа",menu=mProg)
 mMain.add_command(label="Фильтр",command=showfilter)
+mMain.add_cascade(label="Группировка",menu=mGroup)
 root.config(menu=mMain)
 
 tabframe=ttk.Frame(root,borderwidth=3,relief=GROOVE)
@@ -619,7 +911,7 @@ typelbl=ttk.Label(attrframe,anchor="w")
 manalbl=ttk.Label(attrframe,anchor="e")
 strendlbl=ttk.Label(attrframe,anchor="e")
 descrlbl=ttk.Label(attrframe,anchor="center",wraplength=330)
-flipbtn=ttk.Button(attrframe,text="Перевернуть",state=DISABLED,command=onFlipbtnClick)
+flipbtn=ttk.Button(attrframe,text="Сменить",state=DISABLED,command=onFlipbtnClick)
 imglbl.bind("<ButtonPress>",onimgpress)
 imglbl.grid(row=0,column=0,columnspan=2)
 namelbl.grid(row=1,column=0,sticky="nsew")
@@ -629,11 +921,24 @@ strendlbl.grid(row=2,column=1,sticky="nsew")
 descrlbl.grid(row=3,column=0,columnspan=2,sticky="nsew")
 flipbtn.grid(row=4,column=0,columnspan=2,sticky="ns")
 
+def sort(col, reverse):
+    alldata.sort(reverse=reverse,key=lambda k:k[col])
+    setTabData()
+    index=0
+    for r in tree.get_children():
+            tree.delete(r)        
+    for v in tabdata:
+        tree.insert("", END,iid=index, values=v)
+        index+=1
+    tree.heading(col, command=lambda: sort(col, not reverse))
+
 tree=ttk.Treeview(tabframe,columns=cols,show="headings")
 tree.grid(row=0,column=0,sticky="nsew")
-tree.heading("Name", text="Название")
-tree.heading("SetName", text="Сет")
-tree.heading("Number", text="Номер")
+tree.heading("Numero",text="№ п/п")
+tree.column("Numero",width=50,stretch=False,anchor="center")
+tree.heading("Name", text="Название",command=lambda: sort(1, False))
+tree.heading("SetName", text="Сет",command=lambda: sort(2, False))
+tree.heading("Number", text="Номер",command=lambda: sort(3, False))
 tree.column("Number",width=50,stretch=False,anchor="center")
 tree.heading("Rarity", text="Редкость")
 tree.column("Rarity",width=75,stretch=False,anchor="center")
@@ -660,5 +965,144 @@ clearbtn=ttk.Button(searchframe,text="Сброс",command=onClearSearchButtonCli
 searchent.pack(side=LEFT)
 searchbtn.pack(side=LEFT)
 clearbtn.pack(side=LEFT)
+
+class StatsTree(ttk.Treeview):
+    def __init__(self,mstr,request,condition,cursor,height):
+        super().__init__(master=mstr,columns=("Numer","Name","NoQuantity","Quantity"),show="headings",height=height)
+        self.request=request
+        self.heading("Numer",text="№ п/п")
+        self.column("Numer",width=50,stretch=False,anchor="center")
+        self.heading("Name",text="Наименование",command=lambda: self.sort(1, False))
+        self.heading("NoQuantity",text="Без учета кол-ва",command=lambda: self.sort(2, False))
+        self.column("NoQuantity",width=100,stretch=False,anchor="center")
+        self.heading("Quantity",text="С учетом кол-ва",command=lambda: self.sort(3, False))
+        self.column("Quantity",width=100,stretch=False,anchor="center")
+        if(condition!=""):
+            txt=request.replace("GROUP","WHERE "+condition+" GROUP")
+            cursor.execute(f"{txt}")
+        else:
+            cursor.execute(f"{request}")
+        self.dbdata=cursor.fetchall()
+        self.data=list()
+        i=1
+        for v in self.dbdata:
+            self.data.append((i,)+v[:])
+            i+=1
+        for v in self.data:
+            self.insert("",END,values=v)
+    def sort(self,col,reverse):
+        self.dbdata.sort(reverse=reverse,key=lambda k:k[col-1])
+        self.data=list()
+        i=1
+        for v in self.dbdata:
+            self.data.append((i,)+v[:])
+            i+=1
+        for r in self.get_children():
+            self.delete(r)        
+        for v in self.data:
+            self.insert("",END,values=v)
+        self.heading(col, command=lambda: self.sort(col, not reverse))
+        
+
+def showstats():
+    global dbcursor,condition
+       
+    statswnd=Toplevel()
+    statswnd.title("Статистика")
+    statswnd.minsize(500,950)
+    statswnd.resizable(False,False)
+    
+    setlbl=ttk.Label(statswnd,anchor="center",text="Статистика по сетам")
+    setlbl.pack(side=TOP)
+    setframe=ttk.Frame(statswnd)
+    setframe.pack(side=TOP)
+    settree=StatsTree(setframe,"SELECT Setname, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY Setname;",condition,dbcursor,3)
+    settree.pack(side=LEFT)
+    settreescroll=ttk.Scrollbar(setframe,orient=VERTICAL,command=settree.yview)
+    settree.configure(yscroll=settreescroll.set)
+    settreescroll.pack(side=LEFT,fill=Y)
+    
+    
+    rarlbl=ttk.Label(statswnd,anchor="center",text="Статистика по редкости")
+    rarlbl.pack(side=TOP)
+    rarframe=ttk.Frame(statswnd)
+    rarframe.pack(side=TOP)
+    rartree=StatsTree(rarframe,"SELECT Rarity, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY Rarity;",condition,dbcursor,2)
+    rartree.pack(side=LEFT)
+    rartreescroll=ttk.Scrollbar(rarframe,orient=VERTICAL,command=rartree.yview)
+    rartree.configure(yscroll=rartreescroll.set)
+    rartreescroll.pack(side=LEFT,fill=Y)
+    
+    suptyplbl=ttk.Label(statswnd,anchor="center",text="Статистика по супертипам")
+    suptyplbl.pack(side=TOP)
+    suptypframe=ttk.Frame(statswnd)
+    suptypframe.pack(side=TOP)
+    suptyptree=StatsTree(suptypframe,"SELECT SuperType, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY SuperType;",condition,dbcursor,3)
+    suptyptree.pack(side=LEFT)
+    suptyptreescroll=ttk.Scrollbar(suptypframe,orient=VERTICAL,command=suptyptree.yview)
+    suptyptree.configure(yscroll=suptyptreescroll.set)
+    suptyptreescroll.pack(side=LEFT,fill=Y)
+    
+    typlbl=ttk.Label(statswnd,anchor="center",text="Статистика по типам")
+    typlbl.pack(side=TOP)
+    typframe=ttk.Frame(statswnd)
+    typframe.pack(side=TOP)
+    typtree=StatsTree(typframe,"SELECT Type, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY Type;",condition,dbcursor,3)
+    typtree.pack(side=LEFT)
+    typtreescroll=ttk.Scrollbar(typframe,orient=VERTICAL,command=typtree.yview)
+    typtree.configure(yscroll=typtreescroll.set)
+    typtreescroll.pack(side=LEFT,fill=Y)
+    
+    undtyplbl=ttk.Label(statswnd,anchor="center",text="Статистика по подтипам")
+    undtyplbl.pack(side=TOP)
+    undtypframe=ttk.Frame(statswnd)
+    undtypframe.pack(side=TOP)
+    undtyptree=StatsTree(undtypframe,"SELECT UnderType, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY UnderType;",condition,dbcursor,3)
+    undtyptree.pack(side=LEFT)
+    undtyptreescroll=ttk.Scrollbar(undtypframe,orient=VERTICAL,command=undtyptree.yview)
+    undtyptree.configure(yscroll=undtyptreescroll.set)
+    undtyptreescroll.pack(side=LEFT,fill=Y)
+    
+    collbl=ttk.Label(statswnd,anchor="center",text="Статистика по цветам")
+    collbl.pack(side=TOP)
+    colframe=ttk.Frame(statswnd)
+    colframe.pack(side=TOP)
+    coltree=StatsTree(colframe,"SELECT Color, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY Color;",condition,dbcursor,3)
+    coltree.pack(side=LEFT)
+    coltreescroll=ttk.Scrollbar(colframe,orient=VERTICAL,command=coltree.yview)
+    coltree.configure(yscroll=coltreescroll.set)
+    coltreescroll.pack(side=LEFT,fill=Y)
+    
+    artlbl=ttk.Label(statswnd,anchor="center",text="Статистика по художникам")
+    artlbl.pack(side=TOP)
+    artframe=ttk.Frame(statswnd)
+    artframe.pack(side=TOP)
+    arttree=StatsTree(artframe,"SELECT Artist, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY Artist;",condition,dbcursor,3)
+    arttree.pack(side=LEFT)
+    arttreescroll=ttk.Scrollbar(artframe,orient=VERTICAL,command=arttree.yview)
+    arttree.configure(yscroll=arttreescroll.set)
+    arttreescroll.pack(side=LEFT,fill=Y)
+
+    deslbl=ttk.Label(statswnd,anchor="center",text="Статистика по оформлению")
+    deslbl.pack(side=TOP)
+    desframe=ttk.Frame(statswnd)
+    desframe.pack(side=TOP)
+    destree=StatsTree(desframe,"SELECT Design, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY Design;",condition,dbcursor,3)
+    destree.pack(side=LEFT)
+    destreescroll=ttk.Scrollbar(desframe,orient=VERTICAL,command=destree.yview)
+    destree.configure(yscroll=destreescroll.set)
+    destreescroll.pack(side=LEFT,fill=Y)
+    
+    foillbl=ttk.Label(statswnd,anchor="center",text="Статистика по фойлу")
+    foillbl.pack(side=TOP)
+    foilframe=ttk.Frame(statswnd)
+    foilframe.pack(side=TOP)
+    foiltree=StatsTree(foilframe,"SELECT Foil, COUNT(*), SUM(Quantity) FROM WorkTable GROUP BY Foil;",condition,dbcursor,2)
+    foiltree.pack(side=LEFT)
+    foiltreescroll=ttk.Scrollbar(foilframe,orient=VERTICAL,command=foiltree.yview)
+    foiltree.configure(yscroll=foiltreescroll.set)
+    foiltreescroll.pack(side=LEFT,fill=Y)
+
+mMain.add_command(label="Статистика",command=showstats)
 
 root.mainloop()
